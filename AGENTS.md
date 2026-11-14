@@ -13,7 +13,8 @@ npm test    # simulation tests, Node ≥ 22 built-in runner
 
 - Before reporting done, run `npm test`. For anything visible, also look at the page in a browser, in light and dark mode.
 - Keep it dependency-free: no bundler, no npm packages, no CDN scripts.
-- Not deployed and no git remote yet; ask before setting up either.
+- Hosting is set up for Netlify (`netlify.toml`, `_headers`), but there is no git remote and no live site yet; ask before creating either.
+- `_headers` sets a strict Content-Security-Policy (`default-src 'self'`): no inline scripts or styles in HTML, no third-party requests. Setting styles from JS (`el.style`, `setProperty`) is fine.
 
 ## Docs
 

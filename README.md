@@ -21,7 +21,11 @@ npm start   # python3 -m http.server 8000
 npm test    # simulation tests (Node 22 or newer, no dependencies)
 ```
 
-Then open http://localhost:8000. Any static host works for deployment; there is no build step. The tilt sensor only works over HTTPS (or on localhost).
+Then open http://localhost:8000. The tilt sensor and installing the app need HTTPS (or localhost).
+
+## Deploying
+
+Set up for [Netlify](https://www.netlify.com): `netlify.toml` publishes the repository root with no build step, and `_headers` adds the manifest's content type and security headers (a strict Content-Security-Policy that allows only the site's own files). Connect the Git repository in Netlify and it deploys on every push. Deploy from Git rather than by dragging the folder in, so local files that aren't committed (agent notes, `.hallmark/`) stay off the site. Any other static host works too, just without those headers.
 
 ## Structure
 

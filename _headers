@@ -1,0 +1,11 @@
+# Netlify response headers (https://docs.netlify.com/routing/headers/).
+# Netlify's default Cache-Control (max-age=0, must-revalidate) already makes browsers re-check
+# every file, including sw.js, so updates arrive on the next visit; nothing to add for caching.
+
+/*
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json

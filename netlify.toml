@@ -1,0 +1,4 @@
+# Netlify: the site is the repository root, served as-is. No build step.
+[build]
+  publish = "."
+  command = ""
