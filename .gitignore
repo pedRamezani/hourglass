@@ -2,3 +2,6 @@
 
 # Local, machine-specific agent notes
 CLAUDE.local.md
+
+# Hallmark design-run records (screenshots, lint history)
+.hallmark/

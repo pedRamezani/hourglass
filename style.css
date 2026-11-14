@@ -1,43 +1,80 @@
+/* Hallmark · shape: app screen · genre: playful · theme: custom · redesign: full · idea: "the glass is the screen: one mahogany hourglass shot on a seamless backdrop" · vibe: "quiet studio product shot, pixel-made, warm"
+ * paper: oklch(97.6% 0.004 80) · accent: oklch(40% 0.1 32) · display: system-ui · body: system-ui
+ * nav: kept (title and hint) · signature: the pixel hourglass at full height · states: running, flat, on its side, time's up, tilt error
+ * axes: light/grotesk-sans/warm · posture: Restrained · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4 · weakest: E, the caption column is plain on purpose; the object carries the screen */
+/* Hallmark · finish-review: subagent · 5 findings · 5 resolved (controls beside the glass, one dominant highlight, soft contact shadow, lit cap rims in dark, motion-blurred stream) · gap: none */
+/* Hallmark · reworded "Sand Clock" to "Hourglass" · the owner's rename (the correct English name) */
+/* Hallmark · answered F4 · the secondary controls are neutral surface chips (--color-button), quiet beside the one mahogany Flip; not a second primary */
+/* Hallmark · waive 48 · the simulation colours (--sand-*, --glass-*, --wood-*) are tokens read by js/main.js, not literals */
+
 :root {
   color-scheme: light dark;
 
-  --bg: #f3eee4;
-  --ink: #2a241c;
-  --muted: #74695a;
-  --line: #d6cbb8;
-  --button: #fbf8f2;
-  --accent: #9a5b1e;
-  --accent-ink: #fffaf2;
-  --focus: #b8701f;
+  --color-paper: oklch(97.6% 0.004 80);
+  --color-paper-2: oklch(91.5% 0.008 70); /* the backdrop's falloff towards the edges */
+  --color-ink: oklch(24% 0.02 40);
+  --color-muted: oklch(47% 0.02 45);
+  --color-button: oklch(99.5% 0.002 80);
+  --color-button-hover: oklch(95% 0.008 70);
+  --color-accent: oklch(40% 0.1 32); /* the mahogany of the caps */
+  --color-accent-hover: oklch(34% 0.09 32);
+  --color-accent-ink: oklch(97.5% 0.01 70);
+  --color-focus: oklch(52% 0.14 45);
+  --color-disabled: oklch(90% 0.006 70);
+  --color-disabled-ink: oklch(45% 0.01 60);
+
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-time: clamp(2.5rem, 7vw, 4.5rem);
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --radius: 0.6rem;
+  --dur-micro: 120ms;
 
   /* Read by js/main.js to paint the simulation. */
-  --sand-light: #f0c46a;
-  --sand-dark: #c58a2c;
-  --glass-fill: rgb(255 255 255 / 0.55);
+  --sand-light: oklch(86% 0.055 80);
+  --sand-dark: oklch(78% 0.07 72);
+  --glass-fill: rgb(255 255 255 / 0.3);
   --glass-shine: rgb(255 255 255 / 0.95);
-  --glass-edge: #b9c3c4;
-  --wood-light: #8b5a36;
-  --wood-dark: #5b3620;
+  --glass-edge: rgb(150 160 166 / 0.45);
+  --glass-rim: rgb(128 138 144 / 0.7);
+  --glass-shadow: rgb(70 50 40 / 0.2);
+  --wood-light: oklch(44% 0.1 32);
+  --wood-dark: oklch(24% 0.06 28);
+  --wood-shine: oklch(62% 0.09 38);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #15120e;
-    --ink: #eee6d8;
-    --muted: #a39785;
-    --line: #3a3229;
-    --button: #221d17;
-    --accent: #e0a55a;
-    --accent-ink: #1b140b;
-    --focus: #e8b46e;
+    --color-paper: oklch(21% 0.01 55);
+    --color-paper-2: oklch(13% 0.006 50);
+    --color-ink: oklch(93% 0.012 70);
+    --color-muted: oklch(73% 0.02 60);
+    --color-button: oklch(25% 0.012 55);
+    --color-button-hover: oklch(30% 0.014 55);
+    --color-accent: oklch(74% 0.09 52);
+    --color-accent-hover: oklch(80% 0.08 55);
+    --color-accent-ink: oklch(18% 0.02 40);
+    --color-focus: oklch(80% 0.11 65);
+    --color-disabled: oklch(28% 0.008 55);
+    --color-disabled-ink: oklch(68% 0.01 60);
 
-    --sand-light: #f4cd7c;
-    --sand-dark: #b97f27;
-    --glass-fill: rgb(255 255 255 / 0.05);
-    --glass-shine: rgb(255 255 255 / 0.16);
-    --glass-edge: #56605f;
-    --wood-light: #7a4e2f;
-    --wood-dark: #44291a;
+    --sand-light: oklch(82% 0.06 78);
+    --sand-dark: oklch(72% 0.07 70);
+    --glass-fill: rgb(255 255 255 / 0.035);
+    --glass-shine: rgb(255 255 255 / 0.45);
+    --glass-edge: rgb(205 215 220 / 0.16);
+    --glass-rim: rgb(215 225 230 / 0.42);
+    --glass-shadow: rgb(0 0 0 / 0.5);
+    --wood-light: oklch(46% 0.1 32);
+    --wood-dark: oklch(25% 0.06 28);
+    --wood-shine: oklch(70% 0.09 42);
   }
 }
 
@@ -47,40 +84,71 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-x: clip;
+}
+
+html {
+  scrollbar-color: var(--color-muted) var(--color-paper);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-accent) 25%, transparent);
+  color: var(--color-ink);
+}
+
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
+  overscroll-behavior: none; /* no pull-to-refresh or rubber-banding, it's an app */
   min-height: 100svh;
-  background: var(--bg);
-  color: var(--ink);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  padding: max(1.5rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
-    max(1.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  background-color: var(--color-paper);
+  background-image: radial-gradient(ellipse 70% 80% at 50% 45%, var(--color-paper) 35%, var(--color-paper-2));
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font: var(--text-md) / 1.5 var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
-main {
+/* Phones: title on top, the glass taking every pixel left, readout and controls below. */
+.app {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "head" "stage" "readout" "controls";
+  gap: var(--space-sm);
+  height: 100svh;
+  padding: max(var(--space-sm), env(safe-area-inset-top)) max(var(--space-md), env(safe-area-inset-right))
+    max(var(--space-md), env(safe-area-inset-bottom)) max(var(--space-md), env(safe-area-inset-left));
+}
+
+.head {
+  grid-area: head;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  max-width: 40rem;
-  margin: 0 auto;
-}
-
-header {
-  text-align: center;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--space-md);
 }
 
 h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--text-lg);
   font-weight: 650;
   letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+  min-width: 0;
+  text-wrap: balance;
 }
 
 .hint {
-  margin: 0.25rem 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  text-wrap: pretty;
 }
 
 @media not (any-pointer: fine) {
@@ -89,17 +157,22 @@ h1 {
   }
 }
 
-/* The stage is square so the glass fits at any rotation. */
 .stage {
-  width: min(100%, 64svh);
-  aspect-ratio: 1;
+  grid-area: stage;
+  position: relative;
   display: grid;
   place-items: center;
+  min-height: 0;
+  contain: size; /* the canvases are sized from the stage, never the other way round */
   touch-action: none;
   cursor: grab;
-  border-radius: 1rem;
+  border-radius: var(--radius);
   user-select: none;
   -webkit-user-select: none;
+}
+
+.stage > * {
+  grid-area: 1 / 1;
 }
 
 .stage.dragging {
@@ -107,30 +180,45 @@ h1 {
 }
 
 .stage:focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--color-focus);
   outline-offset: 4px;
 }
 
 .glass {
-  height: 100%;
-  aspect-ratio: var(--aspect, 3 / 5);
-  transform: rotate(var(--angle, 0deg));
+  /* Sized and turned by js/main.js. */
+  will-change: transform;
 }
 
-.glass canvas {
+.glass canvas,
+.shadow {
   display: block;
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
 }
 
-.readout {
+.shadow {
+  opacity: var(--shadow, 1);
+  transform: translateY(calc(var(--shadow-y, 0px) * var(--fit, 1))) scale(var(--fit, 1));
+}
+
+.noscript {
+  max-width: 20rem;
+  margin: 0;
   text-align: center;
+  color: var(--color-muted);
+}
+
+.readout {
+  grid-area: readout;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-md);
 }
 
 .time {
-  display: block;
-  font-size: clamp(2.5rem, 9vw, 3.5rem);
+  font-size: var(--text-time);
   font-weight: 600;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -138,66 +226,241 @@ h1 {
 }
 
 .status {
-  margin: 0.4rem 0 0;
+  margin: 0;
   min-height: 1.5em;
-  color: var(--muted);
-  font-size: 0.95rem;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
 }
 
 .controls {
+  grid-area: controls;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.6rem;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 button,
 select {
+  touch-action: manipulation; /* no double-tap zoom on quick taps */
   font: inherit;
-  color: inherit;
-  background: var(--button);
-  border: 1px solid var(--line);
-  border-radius: 0.6rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  background: var(--color-button);
+  border: 1px solid var(--color-muted);
+  border-bottom-width: 2px; /* a key's lip: it presses down */
+  border-radius: var(--radius);
   min-height: 2.75rem;
-  padding: 0 1.1rem;
+  padding: 0 var(--space-md);
   cursor: pointer;
+  transition:
+    background-color var(--dur-micro) ease-out,
+    border-color var(--dur-micro) ease-out;
 }
 
 button:hover,
 select:hover {
-  border-color: var(--muted);
+  background: var(--color-button-hover);
+  border-color: var(--color-ink);
+}
+
+button:active,
+select:active {
+  background: var(--color-paper-2);
+  border-bottom-width: 1px;
+  padding-top: 1px;
 }
 
 button:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
+  transition: none;
 }
 
 button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  border-bottom-width: 1px;
+  color: var(--color-accent-ink);
   font-weight: 600;
+  padding: 0 var(--space-lg);
+}
+
+button.primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+button.primary:active {
+  padding-top: 0;
+  background: var(--color-ink);
+  border-color: var(--color-ink);
 }
 
 button[aria-pressed="true"] {
-  border-color: var(--accent);
-  box-shadow: inset 0 0 0 1px var(--accent);
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 
 button:disabled {
-  opacity: 0.6;
+  background: var(--color-disabled);
+  border-color: var(--color-disabled);
+  color: var(--color-disabled-ink);
   cursor: progress;
 }
 
 .duration {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--muted);
+  gap: var(--space-xs);
+  color: var(--color-muted);
 }
 
 .duration select {
-  padding-right: 0.6rem;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-inline: var(--space-md) calc(var(--space-md) + var(--space-md));
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pixel glyphs, drawn cell by cell with box-shadows in the text colour so they follow the theme
+   and sit beside the pixel glass. --px is one glyph cell. */
+.controls {
+  --px: 2px;
+}
+
+/* The select's chevron. */
+.duration::after {
+  content: "";
+  position: absolute;
+  right: calc(var(--space-md) + 4 * var(--px));
+  top: 50%;
+  width: var(--px);
+  height: var(--px);
+  margin-top: calc(-1.5 * var(--px));
+  color: var(--color-ink);
+  background: currentColor; /* cell (0, 0): a box-shadow never paints under its own box */
+  box-shadow:
+    calc(0 * var(--px)) calc(0 * var(--px)),
+    calc(4 * var(--px)) calc(0 * var(--px)),
+    calc(1 * var(--px)) calc(1 * var(--px)),
+    calc(3 * var(--px)) calc(1 * var(--px)),
+    calc(2 * var(--px)) calc(2 * var(--px));
+  pointer-events: none;
+}
+
+/* Refill: a small hourglass with a full top bulb. */
+#refill {
+  display: inline-flex;
+  align-items: center;
+}
+
+#refill::before {
+  content: "";
+  width: var(--px);
+  height: var(--px);
+  margin-right: calc(4 * var(--px) + var(--space-xs));
+  transform: translate(calc(-1 * var(--px)), calc(-3 * var(--px)));
+  background: currentColor;
+  box-shadow:
+    calc(0 * var(--px)) calc(0 * var(--px)),
+    calc(1 * var(--px)) calc(0 * var(--px)),
+    calc(2 * var(--px)) calc(0 * var(--px)),
+    calc(3 * var(--px)) calc(0 * var(--px)),
+    calc(4 * var(--px)) calc(0 * var(--px)),
+    calc(1 * var(--px)) calc(1 * var(--px)),
+    calc(2 * var(--px)) calc(1 * var(--px)),
+    calc(3 * var(--px)) calc(1 * var(--px)),
+    calc(2 * var(--px)) calc(2 * var(--px)),
+    calc(2 * var(--px)) calc(3 * var(--px)),
+    calc(1 * var(--px)) calc(4 * var(--px)),
+    calc(3 * var(--px)) calc(4 * var(--px)),
+    calc(0 * var(--px)) calc(5 * var(--px)),
+    calc(4 * var(--px)) calc(5 * var(--px)),
+    calc(0 * var(--px)) calc(6 * var(--px)),
+    calc(1 * var(--px)) calc(6 * var(--px)),
+    calc(2 * var(--px)) calc(6 * var(--px)),
+    calc(3 * var(--px)) calc(6 * var(--px)),
+    calc(4 * var(--px)) calc(6 * var(--px));
+}
+
+option {
+  background: var(--color-button);
+  color: var(--color-ink);
+}
+
+@media (max-width: 30rem) {
+  .controls {
+    gap: var(--space-xs);
+  }
+
+  button,
+  select {
+    padding-inline: var(--space-sm);
+  }
+
+  button.primary {
+    padding-inline: var(--space-md);
+  }
+
+  .duration select {
+    padding-inline: var(--space-sm) calc(var(--space-sm) + var(--space-md));
+  }
+
+  .duration::after {
+    right: calc(var(--space-sm) + 4 * var(--px));
+  }
+}
+
+/* The select's value says what it is; the label stays for screen readers. */
+.duration-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Wide screens: the glass stands in the middle at full height, the title top left, and the
+   readout and controls beside the glass at the height of its neck. */
+@media (orientation: landscape) and (min-width: 48rem) {
+  .app {
+    --side: minmax(14rem, 1fr);
+    grid-template-columns: var(--side) min(70svh, 100vw - 30rem) var(--side);
+    grid-template-rows: auto minmax(0, 1fr) auto auto minmax(0, 1fr);
+    grid-template-areas:
+      "head stage ."
+      ". stage ."
+      ". stage readout"
+      ". stage controls"
+      ". stage .";
+    column-gap: var(--space-lg);
+    row-gap: var(--space-md);
+    padding-block: max(var(--space-lg), env(safe-area-inset-top)) max(var(--space-lg), env(safe-area-inset-bottom));
+    padding-inline: max(var(--space-lg), env(safe-area-inset-left)) max(var(--space-lg), env(safe-area-inset-right));
+  }
+
+  .head {
+    flex-direction: column;
+    row-gap: var(--space-xs);
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .readout {
+    flex-direction: column;
+    row-gap: var(--space-xs);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  select {
+    transition: none;
+  }
 }

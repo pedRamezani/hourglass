@@ -3,21 +3,29 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Sand Clock</title>
+    <title>Hourglass</title>
     <meta name="author" content="Pedram Ramezani" />
     <meta name="description" content="A falling-sand hourglass you can turn, tilt and use as a timer." />
     <meta name="color-scheme" content="light dark" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Sand Clock" />
+    <meta property="og:title" content="Hourglass" />
     <meta property="og:description" content="A falling-sand hourglass you can turn, tilt and use as a timer." />
-    <link rel="icon" href="icon/favicon.svg" />
+    <meta name="theme-color" content="#f8f7f4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1c1714" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Hourglass" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon/apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="js/main.js"></script>
   </head>
   <body>
-    <main>
-      <header>
-        <h1>Sand Clock</h1>
+    <main class="app">
+      <header class="head">
+        <h1>Hourglass</h1>
         <p class="hint">Drag the glass to turn it<span class="keys">, or use the arrow keys and Space</span>.</p>
       </header>
 
@@ -31,9 +39,11 @@
         aria-valuemax="359"
         aria-valuenow="0"
       >
+        <canvas id="shadow" class="shadow" aria-hidden="true"></canvas>
         <div id="glass" class="glass">
           <canvas id="sand" aria-hidden="true"></canvas>
         </div>
+        <noscript><p class="noscript">The sand needs JavaScript to fall.</p></noscript>
       </div>
 
       <section class="readout" aria-label="Timer">
@@ -44,7 +54,7 @@
       <div class="controls">
         <button id="flip" type="button" class="primary">Flip</button>
         <label class="duration">
-          <span>Timer</span>
+          <span class="duration-label">Timer</span>
           <select id="duration">
             <option value="30">30 s</option>
             <option value="60" selected>1 min</option>

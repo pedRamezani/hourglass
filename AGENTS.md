@@ -1,4 +1,4 @@
-# Sand Clock — Agent Guide
+# Hourglass — Agent Guide
 
 A falling-sand hourglass in the browser that can be turned, tilted with the phone's orientation sensor and used as a timer. Plain HTML, CSS and ES modules: no dependencies, no build step.
 

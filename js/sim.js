@@ -13,7 +13,7 @@
 export const OUTSIDE = 0;
 export const EMPTY = 1; // inside the glass, free
 export const GLASS = 2;
-export const FRAME = 3;
+export const FRAME = 3; // wood
 export const SAND = 4;
 
 export const TICKS_PER_SECOND = 60;
@@ -22,6 +22,9 @@ const ACCEL = 0.06; // cells / tick² at full gravity
 const MAX_SPEED = 3; // cells / tick
 const SLIDE_MIN_DOT = 0.15; // a slide must point at least this much along gravity
 const SLIDE_KEEP = 0.5; // share of speed kept after sliding off an obstacle
+// Chance per tick that a grain resting on a 45° slope spreads one more cell sideways (a knight's
+// move). Plain 8-neighbour sand piles at 45°; this lowers the angle of repose towards real sand's.
+const SPREAD = 0.3;
 const MIN_GRAVITY = 0.08; // below this (e.g. a phone lying flat) nothing moves
 
 // The 8 neighbours in ring order, so ring[(k ± 1) % 8] is a 45° rotation.
@@ -32,36 +35,42 @@ const RING_INDEX = new Int8Array(9);
 RING_X.forEach((x, k) => (RING_INDEX[(RING_Y[k] + 1) * 3 + x + 1] = k));
 
 /**
- * Builds the hourglass shape: a grid of cell types plus the interior
- * half-width per row (used by the renderer for the glass highlight).
+ * Builds the hourglass shape: a grid of cell types plus, per row, the interior
+ * half-width (bulb rows) or the wood's half-width (cap rows), which the renderer
+ * uses for shading.
  */
 export function buildHourglass({
-    bulbWidth = 30, // max interior half-width of a bulb, in cells
-    bulbHeight = 62, // rows from the neck to a cap
+    bulbWidth = 32, // max interior half-width of a bulb, in cells
+    bulbHeight = 66, // rows from the neck to a cap
     neck = 1.5, // interior half-width at the neck (1.5 → 3 cells wide)
-    neckLength = 2, // straight rows on either side of the neck row
-    capHeight = 4,
-    // Max widening per row going away from the neck. Well below 1 so the funnel is steeper than
+    neckLength = 3, // straight rows on either side of the neck row
+    capHeight = 10, // rows of wood at each end, collar included
+    // Max widening per row going away from the neck. Below 1 so the funnel is steeper than
     // the 45° piles sand forms in a cellular automaton; otherwise grains stay stuck to the walls.
-    wallSlope = 0.62,
+    wallSlope = 0.85,
 } = {}) {
-    const halfW = bulbWidth + 5;
-    const W = 2 * halfW + 1;
+    const capHalf = bulbWidth + 6; // the wooden disc overhangs the glass
+    const W = 2 * capHalf + 1;
     const H = 2 * (capHeight + bulbHeight) + 1;
-    const cx = halfW;
+    const cx = capHalf;
     const neckRow = capHeight + bulbHeight;
     const cells = new Uint8Array(W * H);
     const halfWidth = new Float32Array(H).fill(-1);
 
-    // Profile from the neck outwards: a funnel limited by wallSlope that eases into a
-    // vertical bulb wall and rounds off towards the cap.
+    // Profile from the neck outwards: a funnel that eases out of the neck, blended (soft minimum)
+    // into a round, pear-shaped bulb that closes in again towards the cap.
     const profile = new Float32Array(bulbHeight + 1);
+    const softMin = (a, b, k) => {
+        const h = Math.max(0, Math.min(1, 0.5 + (0.5 * (b - a)) / k));
+        return b + (a - b) * h - k * h * (1 - h);
+    };
     for (let dy = 0; dy <= bulbHeight; dy++) {
         const t = dy / bulbHeight;
-        const e = Math.max(0, (t - 0.68) / 0.34);
-        const target = dy <= neckLength ? neck : bulbWidth * Math.sqrt(1 - e * e);
-        const eased = dy > 0 ? profile[dy - 1] + wallSlope * Math.min(1, 0.35 + dy / 14) : neck;
-        profile[dy] = Math.min(target, eased);
+        const body = bulbWidth * Math.sqrt(Math.max(0, 1 - ((t - 0.56) / 0.62) ** 2));
+        const run = Math.max(0, dy - neckLength);
+        const funnel = neck + wallSlope * (run - 8 * (1 - Math.exp(-run / 8)));
+        profile[dy] = Math.max(neck, softMin(body, funnel, 8));
+        if (dy > 0) profile[dy] = Math.min(profile[dy], profile[dy - 1] + wallSlope);
     }
 
     for (let y = capHeight; y < H - capHeight; y++) {
@@ -72,30 +81,41 @@ export function buildHourglass({
         }
     }
 
-    // Glass: every non-interior cell touching the interior.
-    for (let y = 1; y < H - 1; y++) {
-        for (let x = 1; x < W - 1; x++) {
-            const i = y * W + x;
-            if (cells[i] !== OUTSIDE) continue;
-            for (let k = 0; k < 8 && cells[i] === OUTSIDE; k++) {
-                if (cells[i + RING_Y[k] * W + RING_X[k]] === EMPTY) cells[i] = GLASS;
+    // Glass, two cells thick: every cell touching the interior, then every cell beside those.
+    const ring = (target, from, neighbours) => {
+        const add = [];
+        for (let y = 1; y < H - 1; y++) {
+            for (let x = 1; x < W - 1; x++) {
+                const i = y * W + x;
+                if (cells[i] !== OUTSIDE) continue;
+                for (let k = 0; k < 8; k += neighbours === 4 ? 2 : 1) {
+                    if (cells[i + RING_Y[k] * W + RING_X[k]] === from) {
+                        add.push(i);
+                        break;
+                    }
+                }
+            }
+        }
+        for (const i of add) cells[i] = target;
+    };
+    ring(GLASS, EMPTY, 8);
+    ring(GLASS, GLASS, 4);
+
+    // Wooden caps, from the outer face inwards: a rounded disc, then a narrower collar
+    // that holds the glass.
+    const collar = Math.round(profile[bulbHeight]) + 4;
+    const capProfile = [capHalf - 2, capHalf - 1, capHalf, capHalf, capHalf, capHalf, capHalf, capHalf - 1, collar + 1, collar];
+    for (let r = 0; r < capHeight; r++) {
+        const hw = capProfile[Math.min(r, capProfile.length - 1)];
+        for (const y of [r, H - 1 - r]) {
+            halfWidth[y] = hw;
+            for (let x = 0; x < W; x++) {
+                if (Math.abs(x - cx) <= hw) cells[y * W + x] = FRAME;
             }
         }
     }
 
-    // Wooden caps (with rounded outer corners) and two posts.
-    for (let y = 0; y < H; y++) {
-        const inCap = y < capHeight || y >= H - capHeight;
-        const edgeRow = y === 0 || y === H - 1;
-        for (let x = 0; x < W; x++) {
-            const dx = Math.abs(x - cx);
-            const i = y * W + x;
-            if (inCap && !(edgeRow && dx === halfW)) cells[i] = FRAME;
-            else if (!inCap && dx >= halfW - 1 && dx <= halfW) cells[i] = FRAME;
-        }
-    }
-
-    return { W, H, cx, neckRow, cells, halfWidth };
+    return { W, H, cx, neckRow, capHeight, cells, halfWidth };
 }
 
 export class SandSim {
@@ -128,16 +148,19 @@ export class SandSim {
         this.bottom = 0;
     }
 
-    /** Removes all sand and fills `fraction` of the top (-1) or bottom (+1) bulb. */
-    fill(side = -1, fraction = 0.85) {
+    /**
+     * Removes all sand and fills `fraction` of the top (-1) or bottom (+1) bulb, settled: from the
+     * neck outwards, so the sand starts as a level heap resting in the funnel.
+     */
+    fill(side = -1, fraction = 0.62) {
         const { cells, W, neckRow } = this;
         for (const i of this.interior) {
             cells[i] = EMPTY;
             this.vx[i] = this.vy[i] = 0;
         }
-        // Fill from the cap towards the neck until the requested share is reached.
-        const bulb = [...this.interior].filter((i) => Math.sign(((i / W) | 0) - neckRow) === side);
-        bulb.sort((a, b) => side * (((b / W) | 0) - ((a / W) | 0)));
+        const row = (i) => (i / W) | 0;
+        const bulb = [...this.interior].filter((i) => Math.sign(row(i) - neckRow) === side);
+        bulb.sort((a, b) => Math.abs(row(a) - neckRow) - Math.abs(row(b) - neckRow));
         const count = Math.round(bulb.length * fraction);
         for (let n = 0; n < count; n++) {
             const i = bulb[n];
@@ -257,6 +280,30 @@ export class SandSim {
                             ok = true;
                             break;
                         }
+                    }
+                }
+
+                if (!ok && Math.random() < SPREAD) {
+                    // Spread: one cell sideways, then one diagonally, if both are free and the sideways
+                    // cell doesn't skip the neck gate.
+                    const k = RING_INDEX[(dy + 1) * 3 + dx + 1];
+                    const sides = Math.random() < 0.5 ? [2, 6] : [6, 2];
+                    for (const turn of sides) {
+                        const c = (k + turn) & 7; // 90° to the travel direction
+                        const d = (k + (turn === 2 ? 1 : 7)) & 7; // 45°, on the same side
+                        const dot = ((RING_X[c] + RING_X[d]) * nx + (RING_Y[c] + RING_Y[d]) * ny) / Math.hypot(RING_X[c] + RING_X[d], RING_Y[c] + RING_Y[d]);
+                        if (dot < SLIDE_MIN_DOT) continue;
+                        const sx = x + RING_X[c];
+                        const sy = y + RING_Y[c];
+                        if (cells[sy * W + sx] !== EMPTY || (sy === neckRow) !== (y === neckRow)) continue;
+                        const ex = sx + RING_X[d];
+                        const ey = sy + RING_Y[d];
+                        if (!this.canEnter(ey * W + ex, sy, ey, gated)) continue;
+                        tx = ex;
+                        ty = ey;
+                        vx = vy = sp = 0;
+                        ok = true;
+                        break;
                     }
                 }
 
