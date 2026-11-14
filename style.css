@@ -1,5 +1,5 @@
 /* Hallmark · shape: app screen · genre: playful · theme: custom · redesign: full · idea: "the glass is the screen: one mahogany hourglass shot on a seamless backdrop" · vibe: "quiet studio product shot, pixel-made, warm"
- * paper: oklch(97.6% 0.004 80) · accent: oklch(40% 0.1 32) · display: system-ui · body: system-ui · controls: monogram (pixel, CC0; pixel is the material, matching the glass)
+ * paper: oklch(97.6% 0.004 80) · accent: oklch(40% 0.1 32) · display: Recursive · body: Recursive · controls: monogram (pixel, CC0; pixel is the material, matching the glass)
  * nav: kept (title and hint) · signature: the pixel hourglass at full height · states: running, flat, on its side, time's up, tilt error
  * axes: light/grotesk-sans/warm · posture: Restrained · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4 · weakest: E, the caption column is plain on purpose; the object carries the screen */
@@ -8,6 +8,13 @@
 /* Hallmark · answered F4 · the secondary controls are neutral surface chips (--color-button), quiet beside the one mahogany Flip; not a second primary */
 /* Hallmark · waive 72 · measured box is monogram's 25px ascent box at 32px, visible 14px glyphs sit ~15px from each edge of the 44px controls (close-ups checked) · the empty font pixels above the capitals are part of the face, not crowding */
 /* Hallmark · waive 48 · --sand-*, --glass-*, --wood-* are declared at :root and read by js/main.js · the simulation colours are tokens, not literals */
+
+@font-face {
+  font-family: "Recursive";
+  src: url("fonts/recursive-latin.woff2") format("woff2");
+  font-weight: 300 1000;
+  font-display: swap;
+}
 
 @font-face {
   font-family: "monogram";
@@ -30,17 +37,21 @@
   --color-focus: oklch(52% 0.14 45);
   --color-disabled: oklch(90% 0.006 70);
   --color-disabled-ink: oklch(45% 0.01 60);
+  --color-shadow: rgb(60 40 30 / 0.18);
 
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Recursive", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   /* monogram is drawn on a 16-units-per-em pixel grid, so it is crisp only where one font pixel is a
      whole number of device pixels: 32px (2 CSS px per font pixel) works at 1×, 2× and 3×. */
   --font-pixel: "monogram", ui-monospace, monospace;
   --text-pixel: 32px;
+  --pixel-advance: calc(var(--text-pixel) * 6 / 16); /* one monogram character */
 
   --text-sm: 0.875rem;
   --text-md: 1rem;
   --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
   --text-time: clamp(2.5rem, 7vw, 4.5rem);
+  --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 0.75rem;
   --space-md: 1rem;
@@ -75,6 +86,7 @@
     --color-focus: oklch(80% 0.11 65);
     --color-disabled: oklch(28% 0.008 55);
     --color-disabled-ink: oklch(68% 0.01 60);
+    --color-shadow: rgb(0 0 0 / 0.5);
 
     --sand-light: oklch(82% 0.06 78);
     --sand-dark: oklch(72% 0.07 70);
@@ -299,6 +311,10 @@ button.primary {
   border-color: var(--color-accent);
   border-bottom-width: 1px;
   color: var(--color-accent-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: 650;
+  -webkit-font-smoothing: antialiased;
   padding: 0 var(--space-lg);
 }
 
@@ -336,6 +352,7 @@ button:disabled {
 .duration select {
   appearance: none;
   -webkit-appearance: none;
+  min-inline-size: calc(6 * var(--pixel-advance) + 4 * var(--space-md)); /* "10 min" fits, so the row never shifts */
   padding-inline: var(--space-md) calc(var(--space-md) + var(--space-md));
   font-variant-numeric: tabular-nums;
 }
@@ -401,9 +418,97 @@ button:disabled {
     calc(4 * var(--px)) calc(6 * var(--px));
 }
 
+/* Browsers without a customisable select keep their native list: at body size, not the pixel size. */
 option {
   background: var(--color-button);
   color: var(--color-ink);
+  font: var(--text-md) / 1.5 var(--font-body);
+}
+
+/* The pixel-font copy of the select's value, used only where the list can't be styled (below). */
+.duration-value {
+  display: none;
+}
+
+/* Firefox and Safari show a native menu sized from the select's own font: keep that at body size
+   (otherwise the menu and its checkmark grow to pixel size), hide the select's text and show the
+   value in the pixel face on top. js/main.js keeps .duration-value in sync. */
+@supports not (appearance: base-select) {
+  .duration select {
+    font: var(--text-md) / 1 var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    color: transparent;
+  }
+
+  .duration-value {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--space-md);
+    pointer-events: none;
+    color: var(--color-ink);
+    font-family: var(--font-pixel);
+    font-size: var(--text-pixel);
+    line-height: 1;
+    -webkit-font-smoothing: none;
+  }
+}
+
+/* Customisable select: the list itself is styled, with the real <select> underneath (keyboard,
+   screen readers and the 'change' event main.js listens to all stay native). */
+@supports (appearance: base-select) {
+  .duration select,
+  .duration select::picker(select) {
+    appearance: base-select;
+  }
+
+  .duration select {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .duration select::picker-icon {
+    display: none; /* the pixel chevron on .duration::after stands in */
+  }
+
+  .duration select::picker(select) {
+    margin-block: var(--space-xs);
+    padding: var(--space-xs);
+    background: var(--color-button);
+    color: var(--color-ink);
+    border: 1px solid var(--color-muted);
+    border-radius: var(--radius);
+    box-shadow: 0 var(--space-2xs) 0 var(--color-shadow); /* a hard pixel drop, like the keys' lip */
+  }
+
+  .duration option {
+    font-family: var(--font-pixel);
+    font-size: var(--text-pixel);
+    line-height: 1;
+    -webkit-font-smoothing: none;
+    padding: var(--space-2xs) var(--space-sm);
+    border-radius: calc(var(--radius) - var(--space-xs) / 2);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+
+  .duration option::checkmark {
+    display: none;
+  }
+
+  .duration option:hover {
+    background: var(--color-button-hover);
+  }
+
+  .duration option:checked {
+    background: color-mix(in oklab, var(--color-accent) 18%, var(--color-button));
+  }
+
+  .duration option:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
 }
 
 @media (max-width: 30rem) {
@@ -438,6 +543,10 @@ option {
 
   .duration::after {
     right: calc(var(--space-sm) + 4 * var(--px));
+  }
+
+  .duration-value {
+    inset-inline-start: var(--space-sm);
   }
 }
 
@@ -498,6 +607,8 @@ option {
 
   #flip {
     grid-column: 1 / -1;
+    min-height: 3.25rem;
+    font-size: var(--text-xl);
   }
 }
 

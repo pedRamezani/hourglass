@@ -11,7 +11,7 @@
  */
 
 /** Cache name. Bumping it makes `activate` delete every older cache. */
-const VERSION = 'hourglass-v2';
+const VERSION = 'hourglass-v3';
 /** Files precached on install, relative to the worker's scope: everything the app needs to start offline. */
 const FILES = [
     './',
@@ -27,6 +27,7 @@ const FILES = [
     'icon/icon-512.png',
     'icon/apple-touch-icon.png',
     'fonts/monogram.ttf',
+    'fonts/recursive-latin.woff2',
 ];
 
 /** Install: precache {@link FILES}, then take over without waiting for old tabs to close. */

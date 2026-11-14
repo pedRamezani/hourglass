@@ -32,6 +32,13 @@ const refillButton = document.getElementById('refill');
 const tiltButton = document.getElementById('tilt');
 /** Timer duration in seconds; 0 means no timer. @type {HTMLSelectElement} */
 const durationSelect = document.getElementById('duration');
+/**
+ * The visible label of the duration select in browsers without a customisable select
+ * (`appearance: base-select`). There the select's own text is kept at body size, because the
+ * native menu (Firefox, Safari) is sized from it, and this pixel-font copy is shown on top.
+ * @type {HTMLElement}
+ */
+const durationValue = document.querySelector('.duration-value');
 
 /** The hourglass geometry shared by the simulation and the renderer. */
 const shape = buildHourglass();
@@ -450,7 +457,16 @@ refillButton.addEventListener('click', () => {
     sim.setDuration(Number(durationSelect.value));
 });
 
-durationSelect.addEventListener('change', () => sim.setDuration(Number(durationSelect.value)));
+/** Mirrors the selected option's text into {@link durationValue}. */
+function showDuration() {
+    durationValue.textContent = durationSelect.selectedOptions[0]?.textContent ?? '';
+}
+
+durationSelect.addEventListener('change', () => {
+    sim.setDuration(Number(durationSelect.value));
+    showDuration();
+});
+showDuration(); // the browser may restore a different value on reload
 
 if (Tilt.supported && matchMedia('(any-pointer: coarse)').matches) {
     tiltButton.hidden = false;

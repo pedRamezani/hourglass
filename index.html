@@ -19,6 +19,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icon/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon/apple-touch-icon.png" />
+    <link rel="preload" href="fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="fonts/monogram.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="js/main.js"></script>
@@ -63,6 +64,7 @@
             <option value="300">5 min</option>
             <option value="600">10 min</option>
           </select>
+          <span class="duration-value" aria-hidden="true">1 min</span>
         </label>
         <button id="refill" type="button">Refill</button>
         <button id="tilt" type="button" aria-pressed="false" hidden>Use tilt</button>
