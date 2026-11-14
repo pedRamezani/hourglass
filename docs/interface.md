@@ -21,6 +21,8 @@ All colours, including the simulation's, are CSS custom properties in `style.css
 
 ## Layout
 
+The app is exactly as tall as the visible area: `.app` uses `--app-height`, which `fitViewport()` in `main.js` sets from `visualViewport.height × scale` (falling back to `100dvh`, then `100svh`). Viewport units alone aren't enough: Firefox for Android's bottom toolbar can cover the page while `svh`/`dvh` still count the space under it.
+
 Phones (portrait): title and hint, then the stage taking all remaining height, then the time with its status, then one row of controls; the Timer label is visually hidden there. Wide landscape screens (`min-width: 48rem`): the stage is a full-height centre column and the title, readout and controls form a caption column on its left.
 
 ## Controls

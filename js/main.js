@@ -333,6 +333,26 @@ function place() {
 
 new ResizeObserver(resize).observe(stage);
 
+/**
+ * Sets `--app-height` on the root to the height of the area the user can actually see, in CSS px
+ * at zoom 1.
+ *
+ * @remarks
+ * Viewport units don't always know about browser toolbars: Firefox for Android's bottom toolbar
+ * can cover the page while `svh` and `dvh` still count the space under it. `visualViewport` reports
+ * what is visible; multiplying by its `scale` undoes pinch zoom, so zooming in doesn't shrink the
+ * app. The stylesheet falls back to `100dvh` until this runs.
+ */
+function fitViewport() {
+    const vv = window.visualViewport;
+    const height = vv ? vv.height * vv.scale : window.innerHeight;
+    document.documentElement.style.setProperty('--app-height', `${Math.round(height)}px`);
+}
+
+fitViewport();
+window.visualViewport?.addEventListener('resize', fitViewport);
+window.addEventListener('resize', fitViewport);
+
 // ---------- Rotation ----------
 
 /** The glass's rotation, in degrees, clockwise; unbounded (it keeps counting past 360). */

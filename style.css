@@ -129,6 +129,7 @@ body {
   margin: 0;
   overscroll-behavior: none; /* no pull-to-refresh or rubber-banding, it's an app */
   min-height: 100svh;
+  min-height: var(--app-height, 100dvh);
   background-color: var(--color-paper);
   background-image: radial-gradient(ellipse 70% 80% at 50% 45%, var(--color-paper) 35%, var(--color-paper-2));
   background-attachment: fixed;
@@ -143,7 +144,11 @@ body {
   grid-template-rows: auto minmax(0, 1fr) auto auto;
   grid-template-areas: "head" "stage" "readout" "controls";
   gap: var(--space-sm);
+  /* The visible height. dvh follows browser toolbars as they show and hide; js/main.js refines it
+     to visualViewport's height (--app-height), because Firefox for Android's bottom toolbar can
+     cover the page without being counted in any viewport unit. */
   height: 100svh;
+  height: var(--app-height, 100dvh);
   padding: max(var(--space-sm), env(safe-area-inset-top)) max(var(--space-md), env(safe-area-inset-right))
     max(var(--space-md), env(safe-area-inset-bottom)) max(var(--space-md), env(safe-area-inset-left));
 }
@@ -565,7 +570,7 @@ option {
 @media (orientation: landscape) and (min-width: 48rem) {
   .app {
     --side: minmax(14rem, 1fr);
-    grid-template-columns: var(--side) min(70svh, 100vw - 30rem) var(--side);
+    grid-template-columns: var(--side) min(0.7 * var(--app-height, 100dvh), 100vw - 30rem) var(--side);
     grid-template-rows: auto minmax(0, 1fr) auto auto minmax(0, 1fr);
     grid-template-areas:
       "head stage ."
