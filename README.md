@@ -1,5 +1,13 @@
 # Hourglass
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/52077d1f-e24f-4811-bc59-119cf27cc7d1/deploy-status)](https://app.netlify.com/projects/pixel-hourglass/deploys)
+[![Live](https://img.shields.io/website?url=https%3A%2F%2Fpixel-hourglass.netlify.app&label=live&up_message=pixel-hourglass.netlify.app)](https://pixel-hourglass.netlify.app/)
+[![PWA](https://img.shields.io/badge/PWA-installable%20%26%20offline-5a0fc8?logo=pwa&logoColor=white)](#features)
+[![Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)](package.json)
+[![Build step](https://img.shields.io/badge/build%20step-none-brightgreen)](netlify.toml)
+[![Tests](https://img.shields.io/badge/tests-node%20%E2%89%A5%2022-339933?logo=nodedotjs&logoColor=white)](test/sim.test.mjs)
+[![Last commit](https://img.shields.io/github/last-commit/pedRamezani/hourglass)](https://github.com/pedRamezani/hourglass/commits/main)
+
 A falling-sand hourglass in the browser. Turn it by dragging, flip it, tilt your phone, and use it as a timer.
 
 ## Features
