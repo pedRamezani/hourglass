@@ -1,0 +1,203 @@
+:root {
+  color-scheme: light dark;
+
+  --bg: #f3eee4;
+  --ink: #2a241c;
+  --muted: #74695a;
+  --line: #d6cbb8;
+  --button: #fbf8f2;
+  --accent: #9a5b1e;
+  --accent-ink: #fffaf2;
+  --focus: #b8701f;
+
+  /* Read by js/main.js to paint the simulation. */
+  --sand-light: #f0c46a;
+  --sand-dark: #c58a2c;
+  --glass-fill: rgb(255 255 255 / 0.55);
+  --glass-shine: rgb(255 255 255 / 0.95);
+  --glass-edge: #b9c3c4;
+  --wood-light: #8b5a36;
+  --wood-dark: #5b3620;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15120e;
+    --ink: #eee6d8;
+    --muted: #a39785;
+    --line: #3a3229;
+    --button: #221d17;
+    --accent: #e0a55a;
+    --accent-ink: #1b140b;
+    --focus: #e8b46e;
+
+    --sand-light: #f4cd7c;
+    --sand-dark: #b97f27;
+    --glass-fill: rgb(255 255 255 / 0.05);
+    --glass-shine: rgb(255 255 255 / 0.16);
+    --glass-edge: #56605f;
+    --wood-light: #7a4e2f;
+    --wood-dark: #44291a;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: max(1.5rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(1.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.hint {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media not (any-pointer: fine) {
+  .hint .keys {
+    display: none;
+  }
+}
+
+/* The stage is square so the glass fits at any rotation. */
+.stage {
+  width: min(100%, 64svh);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  cursor: grab;
+  border-radius: 1rem;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.stage.dragging {
+  cursor: grabbing;
+}
+
+.stage:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.glass {
+  height: 100%;
+  aspect-ratio: var(--aspect, 3 / 5);
+  transform: rotate(var(--angle, 0deg));
+}
+
+.glass canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.readout {
+  text-align: center;
+}
+
+.time {
+  display: block;
+  font-size: clamp(2.5rem, 9vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.status {
+  margin: 0.4rem 0 0;
+  min-height: 1.5em;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+button,
+select {
+  font: inherit;
+  color: inherit;
+  background: var(--button);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  cursor: pointer;
+}
+
+button:hover,
+select:hover {
+  border-color: var(--muted);
+}
+
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+button[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+}
+
+.duration select {
+  padding-right: 0.6rem;
+}

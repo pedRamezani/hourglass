@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sand Clock</title>
+    <meta name="author" content="Pedram Ramezani" />
+    <meta name="description" content="A falling-sand hourglass you can turn, tilt and use as a timer." />
+    <meta name="color-scheme" content="light dark" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sand Clock" />
+    <meta property="og:description" content="A falling-sand hourglass you can turn, tilt and use as a timer." />
+    <link rel="icon" href="icon/favicon.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Sand Clock</h1>
+        <p class="hint">Drag the glass to turn it<span class="keys">, or use the arrow keys and Space</span>.</p>
+      </header>
+
+      <div
+        id="stage"
+        class="stage"
+        tabindex="0"
+        role="slider"
+        aria-label="Hourglass rotation"
+        aria-valuemin="0"
+        aria-valuemax="359"
+        aria-valuenow="0"
+      >
+        <div id="glass" class="glass">
+          <canvas id="sand" aria-hidden="true"></canvas>
+        </div>
+      </div>
+
+      <section class="readout" aria-label="Timer">
+        <output id="time" class="time">0:00</output>
+        <p id="status" class="status" role="status"></p>
+      </section>
+
+      <div class="controls">
+        <button id="flip" type="button" class="primary">Flip</button>
+        <label class="duration">
+          <span>Timer</span>
+          <select id="duration">
+            <option value="30">30 s</option>
+            <option value="60" selected>1 min</option>
+            <option value="120">2 min</option>
+            <option value="300">5 min</option>
+            <option value="600">10 min</option>
+          </select>
+        </label>
+        <button id="refill" type="button">Refill</button>
+        <button id="tilt" type="button" aria-pressed="false" hidden>Use tilt</button>
+      </div>
+    </main>
+  </body>
+</html>
