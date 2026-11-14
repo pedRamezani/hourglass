@@ -31,6 +31,7 @@ Then open http://localhost:8000. Any static host works for deployment; there is 
 | `js/tilt.js` | Gravity vector from the `deviceorientation` event |
 | `js/main.js` | Rendering, rotation, input and the timer readout |
 | `manifest.webmanifest`, `sw.js` | Install metadata and the offline service worker (network first, cache as fallback) |
+| `fonts/` | monogram, the pixel font of the controls (CC0) |
 | `icon/` | Pixel-art icons: `favicon.svg`, and `icon.svg` with the PNGs made from it for home screens |
 | `style.css` | Layout and the colour palette, including the simulation colours |
 | `test/` | Simulation tests |

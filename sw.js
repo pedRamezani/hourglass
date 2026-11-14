@@ -1,9 +1,18 @@
-// Service worker: makes Hourglass work offline once it has been opened.
-//
-// Network first, cache as the fallback: online you always get the current files (no stale page
-// while developing), offline the last copy. Bump VERSION when the file list changes.
+/**
+ * Service worker: makes Hourglass work offline once it has been opened.
+ *
+ * @remarks
+ * Network first, cache as the fallback: online you always get the current files (no stale page
+ * while developing), offline the last copy. Bump VERSION when the file list changes.
+ *
+ * Registered from `js/main.js`; only runs on HTTPS or localhost.
+ * @see docs/interface.md ("Installing and offline").
+ * @packageDocumentation
+ */
 
-const VERSION = 'hourglass-v1';
+/** Cache name. Bumping it makes `activate` delete every older cache. */
+const VERSION = 'hourglass-v2';
+/** Files precached on install, relative to the worker's scope: everything the app needs to start offline. */
 const FILES = [
     './',
     'index.html',
@@ -17,8 +26,10 @@ const FILES = [
     'icon/icon-192.png',
     'icon/icon-512.png',
     'icon/apple-touch-icon.png',
+    'fonts/monogram.ttf',
 ];
 
+/** Install: precache {@link FILES}, then take over without waiting for old tabs to close. */
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches
@@ -28,6 +39,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
+/** Activate: drop caches from other versions and start controlling open pages right away. */
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches
@@ -37,6 +49,11 @@ self.addEventListener('activate', (event) => {
     );
 });
 
+/**
+ * Fetch: same-origin GETs go to the network and successful responses refresh the cache; when the
+ * network fails, serve the cached copy (ignoring the query string), else the cached start page.
+ * Other requests fall through to the browser.
+ */
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;

@@ -25,7 +25,9 @@ Phones (portrait): title and hint, then the stage taking all remaining height, t
 
 ## Controls
 
-Flip is the one filled button (mahogany, `--color-accent`). The others are neutral chips with a 2px bottom lip that flattens on `:active`. The select uses `appearance: none` with its own chevron, and Refill shows a small hourglass with a full top bulb. Both glyphs are pixel art drawn with `box-shadow` cells in `currentColor` (one cell is `--px`; cell (0, 0) is the element's own background, since a box-shadow never paints under its box), so they follow the theme. On phones the padding tightens so all four controls fit one row at 390px.
+Flip is the one filled button (mahogany, `--color-accent`). The others are neutral chips with a 2px bottom lip that flattens on `:active`. The select uses `appearance: none` with its own chevron, and Refill shows a small hourglass with a full top bulb. Both glyphs are pixel art drawn with `box-shadow` cells in `currentColor` (one cell is `--px`; cell (0, 0) is the element's own background, since a box-shadow never paints under its box), so they follow the theme. The controls are set in **monogram**, a CC0 pixel font in `fonts/` (see `fonts/README.md`), through `--font-pixel` at `--text-pixel: 32px`. It is drawn on a 16-units-per-em grid, so only multiples of 16px are crisp, and 32px (2 CSS px per font pixel) is the one size that is crisp at 1×, 2× and 3× and still readable. Never give it a weight (`font-synthesis: none`), since a synthesised bold smears the pixels. Everything else stays in the system face.
+
+Layout: on wide screens Flip has its own row with the dropdown and Refill under it; on phones the controls are a 2×2 grid when *Use tilt* is shown (four pixel-font controls don't fit one 390px row), otherwise one row.
 
 ## Readout
 
